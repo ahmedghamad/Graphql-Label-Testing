@@ -1,0 +1,18 @@
+query GetAllOpenIssues($owner: String!, $repo: String!){
+    repository(owner: $owner, name: $repo){
+        issues(first: 50, states: OPEN){
+            totalCount
+            nodes{
+                id
+                title
+                body
+                state
+                createdAt
+                url
+                author {
+                    login
+                }
+            }
+        }
+    }
+}

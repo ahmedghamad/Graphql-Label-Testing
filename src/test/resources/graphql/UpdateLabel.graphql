@@ -1,0 +1,13 @@
+mutation UpdateLabel($id: ID!, $name: String, $description : String, $color: String) {
+    updateLabel(input: { id: $id, name: $name, description: $description, color: $color }) {
+        clientMutationId
+        label {
+            id
+            name
+            description
+            color
+            updatedAt
+            url
+        }
+    }
+}

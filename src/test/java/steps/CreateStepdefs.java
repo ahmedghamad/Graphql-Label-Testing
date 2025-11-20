@@ -72,6 +72,10 @@ public class CreateStepdefs extends utils.TestBase {
         assertThat(actualDescription, is(labelDescription));
 
     }
+
+    public static String getLabelId() {
+        return labelId;
+    }
 }
 
 

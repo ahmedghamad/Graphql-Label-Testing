@@ -32,3 +32,4 @@ public class Config {
         return prop.getProperty("github.baseuri");
     }
 }
+

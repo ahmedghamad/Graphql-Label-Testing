@@ -5,7 +5,8 @@ Feature: Update Label
 
   Scenario: Updating an label
     When I update the issue
-    Then
+    Then I should see the updated title
+    And I should return the label to it's original state
 
-  Scenario: Issue is restored afterwards
-    Then
+#  Scenario:
+#    Then

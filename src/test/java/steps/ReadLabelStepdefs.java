@@ -33,6 +33,8 @@ public class ReadLabelStepdefs{
     private String labelName;
     private String labelUrl;
     private static Response createResponse;
+    private static final String name = "Graphql-Label-Testing";
+    private static final String owner = "ahmedghamad";
     private String token;
 
 
@@ -48,8 +50,8 @@ public class ReadLabelStepdefs{
                 readQuery("Readlabel.graphql"),
                 "Repository",
                 Map.of(
-                        "name", "Graphql-Label-Testing",
-                        "owner", "ahmedghamad"
+                        "name", name,
+                        "owner", owner
                 )
         );
 
@@ -117,16 +119,16 @@ public class ReadLabelStepdefs{
                 readQuery("Readlabel.graphql"),
                 "Repository",
                 Map.of(
-                        "name", "Graphql-Label-Testing",
-                        "owner", ""
+                        "name", name,
+                        "owner", " "
+
                 )
         );
     }
 
     @And("I should see  an error messages")
     public void iShouldSeeAnErrorMessages() {
-        List<Map<String, Object>> errors = createResponse.jsonPath().getList("errors");
-        String message = (String) errors.get(0).get("message");
-        assertThat(message, is("Variable $name of type String! was provided invalid value"));
+        String errorMessage = createResponse.jsonPath().getString("errors[0].message");
+        assertThat(errorMessage, is("Could not resolve to a Repository with the name ' /Graphql-Label-Testing'."));
     }
 }

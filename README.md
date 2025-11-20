@@ -5,7 +5,7 @@ Test mutations and query of the GitHub Labels feature via GraphQL:
 - Create Label Mutation
 - Repository Labels Query
 - Update Label Mutation
-- Delete LabEL Mutation
+- Delete Label Mutation
 ## Structure of The Test Framework
 
 ![Class Diagram](src/main.png)

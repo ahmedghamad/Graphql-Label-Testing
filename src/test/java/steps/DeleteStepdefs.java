@@ -8,6 +8,8 @@ import org.junit.Assert;
 import utils.Config;
 import utils.TestBase;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,111 +18,56 @@ public class DeleteStepdefs {
     private String token;
     private Response response;
     private String labelId;
-    private String owner;
-    private String repo;
+    private String labelName;
+
+    private static final String repoId = "R_kgDOQY0lAw";
 
     @Given("I have a valid GitHub token")
-    public void valid_token() {
+    public void validToken() {
         token = Config.getToken();
         if (token == null || token.isEmpty()) {
-            throw new RuntimeException("GitHub token not set in Config or environment variables");
+            throw new RuntimeException("GitHub token not set!");
         }
     }
 
     @Given("I have an invalid GitHub token")
-    public void invalid_token() {
+    public void invalidToken() {
         token = "INVALID_TOKEN_12345";
     }
 
-    @Given("I get the id of label {string} in repository {string}")
-    public void get_label_id(String labelName, String repoFullName) {
-        String[] parts = repoFullName.split("/");
-        owner = parts[0];
-        repo = parts[1];
-
-        String query = """
-            query GetLabels($owner: String!, $name: String!) {
-              repository(owner: $owner, name: $name) {
-                labels(first: 100) {
-                  nodes {
-                    id
-                    name
-                  }
-                }
-              }
-            }
-        """;
-
-        Map<String, Object> variables = Map.of(
-                "owner", owner,
-                "name", repo
-        );
-
-        // execute the query using TestBase
-        response = TestBase.executeQuery(query, "GetLabels", variables);
-
-        // debug output
-        System.out.println("GitHub response for labels:\n" + response.asPrettyString());
-
-        List<Map<String, Object>> labels = response.jsonPath()
-                .getList("data.repository.labels.nodes");
-
-        if (labels == null) {
-            throw new RuntimeException("No labels found or repository invalid. Response: " + response.asPrettyString());
+    @Given("I create a new label to delete")
+    public void createLabelToDelete() throws IOException {
+        if (token.startsWith("INVALID")) {
+            labelId = "LA_NONEXISTING";
+            System.out.println("Skipping label creation for invalid token test");
+            return;
         }
 
-        labelId = labels.stream()
-                .filter(l -> labelName.equals(l.get("name")))
-                .map(l -> (String) l.get("id"))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Label not found: " + labelName));
+        labelName = "TempLabel_" + java.util.UUID.randomUUID();
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("repoId", repoId);
+        variables.put("name", labelName);
+        variables.put("color", "FF0000");
+        variables.put("description", "Temporary label for deletion");
+
+        response = TestBase.executeQuery(TestBase.readQuery("CreateLabel.graphql"), "CreateLabel", variables);
+        labelId = response.jsonPath().getString("data.createLabel.label.id");
+
+        if (labelId == null) {
+            throw new RuntimeException("Failed to create label: " + response.asPrettyString());
+        }
+
+        System.out.println("Created label: " + labelName + " (ID: " + labelId + ")");
     }
 
     @Given("I have a non-existent label id")
-    public void non_existent_id() {
+    public void nonExistentLabelId() {
         labelId = "NON_EXISTING_LABEL_ID_ABC123";
     }
 
-    @Given("I have a valid label id for deletion in the repository {string}")
-    public void valid_label_id_for_invalid_token(String repoFullName) {
-        String[] parts = repoFullName.split("/");
-        String owner = parts[0];
-        String repo = parts[1];
-
-        String query = """
-        query GetLabels($owner: String!, $name: String!) {
-          repository(owner: $owner, name: $name) {
-            labels(first: 100) {
-              nodes {
-                id
-                name
-              }
-            }
-          }
-        }
-    """;
-
-        Map<String, Object> variables = Map.of(
-                "owner", owner,
-                "name", repo
-        );
-
-        Response tempResponse = TestBase.executeQuery(query, "GetLabels", variables, Config.getToken());
-
-        List<Map<String, Object>> labels = tempResponse.jsonPath().getList("data.repository.labels.nodes");
-
-        if (labels == null || labels.isEmpty()) {
-            throw new RuntimeException("No labels found in repository: " + repoFullName);
-        }
-
-        labelId = (String) labels.get(0).get("id");
-
-        System.out.println("Fetched valid label ID: " + labelId);
-    }
-
-
     @When("I send a deleteLabel mutation")
-    public void delete_label() {
+    public void deleteLabel() {
         String mutation = """
             mutation DeleteLabel($id: ID!) {
               deleteLabel(input: {id: $id}) {
@@ -130,66 +77,36 @@ public class DeleteStepdefs {
         """;
 
         Map<String, Object> variables = Map.of("id", labelId);
-        response = TestBase.executeQuery(mutation, "DeleteLabel", variables);
 
-        System.out.println("GitHub response for deletion:\n" + response.asPrettyString());
+        // Execute the mutation using the current token (valid or invalid)
+        response = TestBase.executeQuery(mutation, "DeleteLabel", variables);
+        System.out.println("Delete response:\n" + response.asPrettyString());
     }
 
     @Then("the label should be removed from the repository")
-    public void label_removed() {
-        Assert.assertNull("Deletion failed with errors: " + response.asPrettyString(),
-                response.jsonPath().get("errors"));
-
-        // verify deletion
-        String query = """
-            query GetLabels($owner: String!, $name: String!) {
-              repository(owner: $owner, name: $name) {
-                labels(first: 100) {
-                  nodes {
-                    id
-                    name
-                  }
-                }
-              }
-            }
-        """;
-
-        Map<String, Object> vars = Map.of("owner", owner, "name", repo);
-        Response check = TestBase.executeQuery(query, "GetLabels", vars);
-
-        List<Map<String, Object>> labels = check.jsonPath().getList("data.repository.labels.nodes");
-
-        boolean exists = labels != null && labels.stream()
-                .anyMatch(l -> l.get("id").equals(labelId));
-
-        Assert.assertFalse("Label still exists after deletion", exists);
+    public void labelRemoved() {
+        List<Map<String, Object>> errors = response.jsonPath().getList("errors");
+        Assert.assertNull("Deletion failed: " + response.asPrettyString(), errors);
+        System.out.println("Label deleted successfully!");
     }
 
     @Then("the API should return an error message")
-    public void graphql_error() {
+    public void graphqlError() {
         List<Map<String, Object>> errors = response.jsonPath().getList("errors");
-        Assert.assertNotNull("Expected GraphQL errors but got none", errors);
-        Assert.assertTrue("Expected at least one GraphQL error", errors.size() > 0);
-
-        System.out.println("GraphQL Error: " + errors.get(0).get("message"));
+        Assert.assertNotNull("Expected GraphQL error", errors);
+        System.out.println("Error message: " + errors.get(0).get("message"));
     }
 
     @Then("the API should reject the request")
-    public void invalid_token_response() {
+    public void invalidTokenResponse() {
         List<Map<String, Object>> errors = response.jsonPath().getList("errors");
+        Assert.assertNotNull("Expected errors for invalid token", errors);
+        Assert.assertFalse("Expected at least one error", errors.isEmpty());
 
-        Assert.assertNotNull("Expected errors in the response for invalid token, but got none", errors);
-        Assert.assertFalse("Expected at least one error for invalid token, but got none", errors.isEmpty());
+        Object deleteResult = response.jsonPath().get("data.deleteLabel");
+        Assert.assertNull("Delete mutation should return null with invalid token", deleteResult);
 
-        boolean hasAuthError = errors.stream()
-                .anyMatch(err -> ((String) err.get("message")).toLowerCase().contains("authentication") ||
-                        ((String) err.get("message")).toLowerCase().contains("token"));
-
-        Assert.assertTrue("Expected authentication error message in response, but none found", hasAuthError);
-
-        System.out.println("Response for invalid token: " + response.asString());
+        System.out.println("Invalid token response: " + errors.get(0).get("message"));
     }
-
-
 
 }

@@ -4,7 +4,7 @@ Feature: Update Label
     Given an label exists for update
 
   Scenario: Updating an label
-    When I update the issue
+    When I update the label
     Then I should a status code of 200
     And I should see the no error messages
     And I should see the updated title

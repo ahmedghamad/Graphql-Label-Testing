@@ -36,8 +36,8 @@ public class UpdateLabelStepdefs extends TestBase {
         Label_ID = "LA_kwDOQY0lA88AAAACQMVKUw";
     }
 
-    @When("I update the issue")
-    public void iUpdateTheIssue() throws IOException {
+    @When("I update the label")
+    public void iUpdateTheLabel() throws IOException {
         newTitle = "wontfix 2";
         newBody = "This will not be worked on";
         newColour = "ffffff";

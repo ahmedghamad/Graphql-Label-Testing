@@ -1,0 +1,21 @@
+query Repository {
+    repository(name: "Graphql-Label-Testing", owner: "ahmedghamad") {
+        issues {
+            totalCount
+        }
+        labels(first: 50) {
+            totalCount
+            nodes {
+                color
+                createdAt
+                description
+                id
+                isDefault
+                name
+                resourcePath
+                updatedAt
+                url
+            }
+        }
+    }
+}

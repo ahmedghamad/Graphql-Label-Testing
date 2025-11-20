@@ -1,0 +1,11 @@
+
+mutation CreateLabel($repoId: ID!, $name: String!, $color: String!, $description: String) {
+    createLabel(input: {repositoryId: $repoId, name: $name, color: $color, description: $description}) {
+        label {
+            id
+            name
+            color
+            description
+        }
+    }
+}

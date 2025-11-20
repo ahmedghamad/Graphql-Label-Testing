@@ -1,3 +1,4 @@
+
 Feature: Update Label
 
   Background:
@@ -12,3 +13,4 @@ Feature: Update Label
     And I should see it has been updated today
     And I should see the url has been updated
     And I should return the label to it's original state
+

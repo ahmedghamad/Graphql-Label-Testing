@@ -8,7 +8,7 @@ Test mutations and query of the GitHub Labels feature via GraphQL:
 - Delete LabEL Mutation
 ## Structure of The Test Framework
 
-
+![Class Diagram](src/main.png)
 ## How to Set Up The Test Framework
 - Prerequisites:
     - Java 21
@@ -17,6 +17,5 @@ Test mutations and query of the GitHub Labels feature via GraphQL:
     - Clone the repository and open it in your IDE.
 - Run tests:
     - IDE: run the test runner.
-    - 
 ## Further Testing
 Test the mutation addLabelsToLabelable and removeLabelsToLabelable on a issue and get issues.

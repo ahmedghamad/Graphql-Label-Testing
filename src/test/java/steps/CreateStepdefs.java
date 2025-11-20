@@ -19,7 +19,8 @@ import static org.hamcrest.Matchers.*;
 public class CreateStepdefs extends utils.TestBase {
 
     //private static String repositoryId;
-    private static  String repoid="R_kgDOQY0lAw"; ;
+    private static String repoid = "R_kgDOQY0lAw";
+    ;
     private static Response response;
     private static String labelId;
 
@@ -73,16 +74,16 @@ public class CreateStepdefs extends utils.TestBase {
 
     }
 
+
     @And("no errors message")
     public void noErrorsMessage() {
-        assertThat(response.jsonPath().getList("errors"),is(nullValue()));
+        assertThat(response.jsonPath().getList("errors"), is(nullValue()));
     }
 
 
     @And("I set an invalid repository ID")
     public void iSetAnInvalidRepositoryID() {
-        repoid="1232bhj";
-        
+        repoid = "1232bhj";
 
 
     }
@@ -96,7 +97,7 @@ public class CreateStepdefs extends utils.TestBase {
 
     @And("validate error type is Not_Found")
     public void validateErrorTypeIsNot_Found() {
-        String errType=response.jsonPath().getString("errors[0].type");
+        String errType = response.jsonPath().getString("errors[0].type");
         assertThat(errType, containsString("NOT_FOUND"));
 
     }
@@ -112,7 +113,6 @@ public class CreateStepdefs extends utils.TestBase {
 
 
     }
-
 
 
     @And("check the labels")
@@ -143,10 +143,15 @@ public class CreateStepdefs extends utils.TestBase {
 
     @And("I get Variable $color of type String! was provided invalid value")
     public void iGetVariable$colorOfTypeStringWasProvidedInvalidValue() {
-        String errMsg=response.jsonPath().getString("errors[0].message");
+        String errMsg = response.jsonPath().getString("errors[0].message");
         assertThat(errMsg, is("Variable $color of type String! was provided invalid value"));
 
+
     }
+
+
+    public static String getLabelId() {
+        return labelId;
+    }
+
 }
-
-

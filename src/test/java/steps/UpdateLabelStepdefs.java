@@ -6,6 +6,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.response.Response;
+import pojos.update.UpdateResponse;
 import utils.TestBase;
 
 
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Map;
 
 public class UpdateLabelStepdefs extends TestBase {
@@ -29,17 +31,13 @@ public class UpdateLabelStepdefs extends TestBase {
     private static String newColour;
 
     private static Response response;
+    public static UpdateResponse pojoResponse;
 
 
-    @Given("an label exists for update")
-    public void anLabelExistsForUpdate() {
-        Label_ID = "LA_kwDOQY0lA88AAAACQMVKUw";
-    }
-
-    @When("I update the issue")
-    public void iUpdateTheIssue() throws IOException {
-        newTitle = "wontfix 2";
-        newBody = "This will not be worked on";
+    @When("I update the label")
+    public void iUpdateTheLabel() throws IOException {
+        newTitle = "Updated Title";
+        newBody = "Updated Body";
         newColour = "ffffff";
 
         response = TestBase.executeQuery(
@@ -52,28 +50,13 @@ public class UpdateLabelStepdefs extends TestBase {
                         "color", newColour
                 )
         );
+        pojoResponse = response.as(UpdateResponse.class);
     }
 
     @Then("I should see the updated title")
     public void iShouldSeeTheUpdatedTitle() {
-        assertThat(response.jsonPath().getString("data.updateLabel.label.name"), is(newTitle));
-    }
-
-    @And("I should return the label to it's original state")
-    public void iShouldReturnTheLabelToItSOriginalState() throws IOException {
-        newTitle = "wontfix";
-        newBody = "This will not be worked on";
-        newColour = "ffffff";
-        response = TestBase.executeQuery(
-                TestBase.readQuery("UpdateLabel.graphql"),
-                "UpdateLabel",
-                Map.of(
-                        "id", Label_ID,
-                        "name", newTitle,
-                        "description", newBody,
-                        "color", newColour
-                )
-        );
+        //assertThat(response.jsonPath().getString("data.updateLabel.label.name"), is(newTitle));
+        assertThat(pojoResponse.getData().getUpdateLabel().getLabel().getName(), is(newTitle));
     }
 
     @Then("I should a status code of {int}")
@@ -88,13 +71,14 @@ public class UpdateLabelStepdefs extends TestBase {
 
     @And("I should see the updated body")
     public void iShouldSeeTheUpdatedBody() {
-        assertThat(response.jsonPath().getString("data.updateLabel.label.description"), is(newBody));
+        //assertThat(response.jsonPath().getString("data.updateLabel.label.description"), is(newBody));
+        assertThat(pojoResponse.getData().getUpdateLabel().getLabel().getDescription(), is(newBody));
     }
 
 
     @And("I should see it has been updated today")
     public void iShouldSeeItUpdatedToday() {
-        String stringDate = response.jsonPath().getString("data.updateLabel.label.updatedAt");
+        String stringDate = pojoResponse.getData().getUpdateLabel().getLabel().getUpdatedAt();
         stringDate = stringDate.substring(0, stringDate.length() - 1);
         LocalDate date = LocalDateTime.parse(stringDate).toLocalDate();
         assertThat(date.until(LocalDate.now(), ChronoUnit.DAYS), is(0L));
@@ -102,6 +86,70 @@ public class UpdateLabelStepdefs extends TestBase {
 
     @And("I should see the url has been updated")
     public void iShouldSeeTheUrlHasBeenUpdated() {
-        assertThat(response.jsonPath().getString("data.updateLabel.label.url"), is("https://github.com/ahmedghamad/Graphql-Label-Testing/labels/wontfix%202"));
+        assertThat(pojoResponse.getData().getUpdateLabel().getLabel().getUrl(), is("https://github.com/ahmedghamad/Graphql-Label-Testing/labels/Updated%20Title"));
     }
+
+    @And("I get the label ID")
+    public void iGetTheLabelID() {
+        Label_ID = CreateStepdefs.getLabelId();
+    }
+
+
+    @And("I delete the label")
+    public void delete_label() throws IOException {
+        String mutation = readQuery("deleteLabel.graphql");
+        Map<String, Object> variables = Map.of("id", Label_ID);
+
+        response = executeQuery(mutation, "DeleteLabel", variables);
+    }
+
+    @When("I update the label without the name")
+    public void iUpdateTheLabelWithoutTheName() throws IOException {
+        newTitle = "Updated Title";
+        newBody = "Updated Body";
+        newColour = "ffffff";
+
+        response = TestBase.executeQuery(
+                TestBase.readQuery("UpdateLabel.graphql"),
+                "UpdateLabel",
+                Map.of(
+                        "id", Label_ID,
+                        "description", newBody,
+                        "color", newColour
+                )
+        );
+    }
+
+    @And("I should see a invalid value for name error message")
+    public void iShouldSeeAErrorMessage() {
+        List<Map<String, Object>> errors = response.jsonPath().getList("errors");
+        String message = (String) errors.get(0).get("message");
+        assertThat(message, is("Variable $name of type String! was provided invalid value"));
+    }
+
+    @When("I update the label without the ID")
+    public void iUpdateTheLabelWithoutTheID() throws IOException {
+            newTitle = "Updated Title";
+            newBody = "Updated Body";
+            newColour = "ffffff";
+
+            response = TestBase.executeQuery(
+                    TestBase.readQuery("UpdateLabel.graphql"),
+                    "UpdateLabel",
+                    Map.of(
+                            "name", newTitle,
+                            "color", newColour,
+                            "description", newBody
+                    )
+            );
+    }
+
+    @And("I should see a invalid value for ID error message")
+    public void iShouldSeeAInvalidValueErrorMessage() {
+        List<Map<String, Object>> errors = response.jsonPath().getList("errors");
+        String message = (String) errors.get(0).get("message");
+        assertThat(message, is("Variable $id of type ID! was provided invalid value"));
+    }
+
+
 }

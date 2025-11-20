@@ -5,53 +5,61 @@ import io.cucumber.java.PendingException;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import utils.TestBase;
 import io.restassured.response.Response;
 import org.junit.Assert;
 import utils.Config;
 
-
 import java.io.IOException;
 import java.util.Map;
 
-public class ReadLabelStepdefs extends TestBase {
+import static utils.TestBase.executeQuery;
+import static utils.TestBase.readQuery;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
+public class ReadLabelStepdefs{
 
     private String labelDescribtion;
     private String color;
-
     private String labelId;
     private String labelName;
     private static Response createResponse;
+    private String token;
 
 
-    @Given("a label exists")
-    public void aLabelExists() throws IOException {
+    @Given("I have a valid token")
+    public void valid_token_read_label() {
+            token = Config.getToken();
+        }
+
+
+    @Then("I want to be able to get issues with labels")
+    public void iWantToBeAbleToGetIssuesWithLabels() throws IOException {
         createResponse = executeQuery(
                 readQuery("Readlabel.graphql"),
-                "ReadLabel",
+                "Repository",
                 Map.of(
                         "name", "Graphql-Label-Testing",
                         "owner", "ahmedghamad"
                 )
         );
 
-        labelName = createResponse.jsonPath().getString("repository.labels.nodes.name");
-        labelId = createResponse.jsonPath().getString("repository.labels.nodes.id");
-        labelDescribtion = createResponse.jsonPath().getString("repository.labels.nodes.id");
-        color = createResponse.jsonPath().getString("repository.labels.nodes.color");
+        labelName = createResponse.jsonPath().getString("data.repository.labels.nodes[1].name");
+        labelId = createResponse.jsonPath().getString("data.repository.labels.nodes[1].id");
+        labelDescribtion = createResponse.jsonPath().getString("data.repository.labels.nodes[1].description");
+        color = createResponse.jsonPath().getString("data.repository.labels.nodes[1].color");
+
+
+        System.out.println("Label Name: " + labelName);
+        System.out.println("Label ID: " + labelId);
+        System.out.println("Label Description: " + labelDescribtion);
+        System.out.println("Color: " + color);
 
     }
 
 
-    @When("I want to be able to get issues with labels")
-    public void iWantToBeAbleToGetIssuesWithLabels() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
-    }
-
-    @Then("So that I can see which labels are being used")
-    public void soThatICanSeeWhichLabelsAreBeingUsed() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
-    }
 }

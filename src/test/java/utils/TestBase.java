@@ -1,4 +1,5 @@
-import utils.Config;
+package utils;
+
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -20,11 +21,11 @@ public class TestBase {
 
     protected static final String REPO = Config.getRepo();
 
-    protected static String readQuery(String filename) throws IOException {
+    public static String readQuery(String filename) throws IOException {
         return Files.readString(Paths.get("src/test/resources/graphql/" + filename));
     }
 
-    protected static Response executeQuery(String query, String operationName, Map<String, Object> variables){
+    public static Response executeQuery(String query, String operationName, Map<String, Object> variables){
         Map<String, Object> body = Map.of(
                 "query", query,
                 "operationName", operationName,

@@ -28,22 +28,22 @@ public class UpdateLabelStepdefs extends TestBase {
 
     @Given("an label exists for update")
     public void anLabelExistsForUpdate() {
-        Label_ID = "LA_kwDOQY0lA88AAAACQMVKAA";
+        Label_ID = "LA_kwDOQY0lA88AAAACQMVKDg";
     }
 
     @When("I update the issue")
     public void iUpdateTheIssue() throws IOException {
-        newTitle = "bug 2";
-        newBody = "Something isn't working";
-        newColour = "#d73a4a";
+        newTitle = "documentation 2";
+        newBody = "Improvements or additions to documentation";
+        newColour = "0075ca";
 
         response = TestBase.executeQuery(
-                TestBase.readQuery("DeleteIssueById.graphql"),
-                "DeleteIssue",
+                TestBase.readQuery("UpdateLabel.graphql"),
+                "UpdateLabel",
                 Map.of(
                         "id", Label_ID,
-                        "description", newTitle,
-                        "body", newBody,
+                        "name", newTitle,
+                        "description", newBody,
                         "color", newColour
                 )
         );
@@ -56,16 +56,16 @@ public class UpdateLabelStepdefs extends TestBase {
 
     @And("I should return the label to it's original state")
     public void iShouldReturnTheLabelToItSOriginalState() throws IOException {
-        newTitle = "bug";
-        newBody = "Something isn't working";
-        newColour = "#d73a4a";
+        newTitle = "documentation";
+        newBody = "Improvements or additions to documentation";
+        newColour = "0075ca";
         response = TestBase.executeQuery(
-                TestBase.readQuery("DeleteIssueById.graphql"),
-                "DeleteIssue",
+                TestBase.readQuery("UpdateLabel.graphql"),
+                "UpdateLabel",
                 Map.of(
                         "id", Label_ID,
-                        "description", newTitle,
-                        "body", newBody,
+                        "name", newTitle,
+                        "description", newBody,
                         "color", newColour
                 )
         );

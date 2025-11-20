@@ -1,5 +1,5 @@
-query Repository {
-    repository(name: "Graphql-Label-Testing", owner: "ahmedghamad") {
+query Repository ($name: String!, $owner: String!){
+    repository(name: $name, owner: $owner) {
         issues {
             totalCount
         }
@@ -18,4 +18,5 @@ query Repository {
             }
         }
     }
+
 }

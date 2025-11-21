@@ -6,15 +6,10 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
-import utils.TestBase;
 import io.restassured.response.Response;
-import org.junit.Assert;
 import utils.Config;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.nullValue;
@@ -65,9 +60,8 @@ public class ReadLabelStepdefs{
 
     }
 
-
-    @Then("I should a status code of {string}")
-    public void iShouldAStatusCodeOf(String arg0) {
+    @Then("I should get status code of {string}")
+    public void iShouldGetStatusCodeOf(String arg0) {
         assertThat(createResponse.statusCode(), is(200));
     }
 
@@ -120,11 +114,10 @@ public class ReadLabelStepdefs{
                 )
         );
     }
-//    @Then("I should a status code of {string}")
-//    public void ShouldAStatusCodeOf(String arg0) {
-//        assertThat(createResponse.statusCode(), is(200));
-//    }
-
+    @Then("Check status code of {string}")
+    public void checkStatusCodeOf(String arg0) {
+        assertThat(createResponse.statusCode(), is(200));
+    }
 
     @And("I should see  an error messages")
     public void iShouldSeeAnErrorMessages() {
@@ -132,7 +125,7 @@ public class ReadLabelStepdefs{
         assertThat(errorMessage, is("Could not resolve to a Repository with the name ' /Graphql-Label-Testing'."));
     }
 
-    public static Response getCreateResponse() {
-        return createResponse;
-    }
+
+
+
 }

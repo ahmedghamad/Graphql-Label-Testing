@@ -1,7 +1,4 @@
-Feature: GitHub Repository Labels
-  As a GitHub user
-  I want to manage labels in a repository
-  So that I can categorize and organize issues effectively
+Feature: Create a label on GitHub repository
 
   Background:
     Given I have a valid GitHub repository ID

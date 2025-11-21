@@ -54,6 +54,11 @@
             <artifactId>rest-assured</artifactId>
             <version>5.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>net.masterthought</groupId>
+            <artifactId>cucumber-reporting</artifactId>
+            <version>5.7.0</version>
+        </dependency>
 
     </dependencies>
 
@@ -68,6 +73,28 @@
                     <target>21</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>net.masterthought</groupId>
+                <artifactId>maven-cucumber-reporting</artifactId>
+                <version>5.7.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <projectName>My Project</projectName>
+                            <reportOutputDirectory>target/cucumber-html-reports</reportOutputDirectory>
+                            <jsonFiles>
+                                <param>target/cucumber.json</param>
+                            </jsonFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 </project>

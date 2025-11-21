@@ -6,15 +6,10 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
-import utils.TestBase;
 import io.restassured.response.Response;
-import org.junit.Assert;
 import utils.Config;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.nullValue;
@@ -63,16 +58,10 @@ public class ReadLabelStepdefs{
         labelUrl = createResponse.jsonPath().getString("data.repository.labels.nodes[1].url");
 
 
-        System.out.println("Label Name: " + labelName);
-        System.out.println("Label ID: " + labelId);
-        System.out.println("Label Description: " + labelDescribtion);
-        System.out.println("Color: " + color);
-
     }
 
-
-    @Then("I should a status code of {string}")
-    public void iShouldAStatusCodeOf(String arg0) {
+    @Then("I should get status code of {string}")
+    public void iShouldGetStatusCodeOf(String arg0) {
         assertThat(createResponse.statusCode(), is(200));
     }
 
@@ -125,10 +114,18 @@ public class ReadLabelStepdefs{
                 )
         );
     }
+    @Then("Check status code of {string}")
+    public void checkStatusCodeOf(String arg0) {
+        assertThat(createResponse.statusCode(), is(200));
+    }
 
     @And("I should see  an error messages")
     public void iShouldSeeAnErrorMessages() {
         String errorMessage = createResponse.jsonPath().getString("errors[0].message");
         assertThat(errorMessage, is("Could not resolve to a Repository with the name ' /Graphql-Label-Testing'."));
     }
+
+
+
+
 }

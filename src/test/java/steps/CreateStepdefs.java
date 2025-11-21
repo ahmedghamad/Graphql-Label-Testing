@@ -1,6 +1,7 @@
 package steps;
 
 
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -10,7 +11,9 @@ import pojos.create.CreateResponse;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -30,6 +33,7 @@ public class CreateStepdefs extends utils.TestBase {
     private static String labelColor;
     private static String labelDescription;
     public static CreateResponse pojoResponse;
+    private static List<String> createdLabels = new ArrayList<>();
 
     @Given("I have a valid GitHub repository ID")
     public void iHaveAValidGitHubRepositoryID() throws IOException {
@@ -55,6 +59,7 @@ public class CreateStepdefs extends utils.TestBase {
         response = executeQuery(readQuery("CreateLabel.graphql"), "CreateLabel", variables);
         labelId = response.jsonPath().getString("data.createLabel.label.id");
         System.out.println("Created Label ID: " + labelId);
+        createdLabels.add(labelId);
 
         pojoResponse = response.as(CreateResponse.class);
     }
@@ -167,6 +172,16 @@ public class CreateStepdefs extends utils.TestBase {
         repoid = "R_kgDOQY0lAw";
 
 
+    }
+    @After
+    public void cleanupCreatedLabel() throws IOException {
+        if (labelId != null) {
+            Map<String, Object> variables = new HashMap<>();
+            variables.put("id", labelId);
+            executeQuery(readQuery("DeleteLabel.graphql"), "DeleteLabel", variables);
+            labelId = null;
+        }
+        createdLabels.clear();
     }
 
 }

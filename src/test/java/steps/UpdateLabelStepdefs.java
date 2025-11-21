@@ -60,7 +60,7 @@ public class UpdateLabelStepdefs extends TestBase {
     }
 
     @Then("I should a status code of {int}")
-    public void iShouldAStatusCodeOf(int arg0) {
+    public void ShouldAStatusCodeOf(int arg0) {
         assertThat(response.statusCode(), is(200));
     }
 

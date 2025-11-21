@@ -2,7 +2,7 @@
 Feature: Update Label
 
   Background:
-    Given I have a valid GitHub repository ID
+    Given I set a valid repository ID
     And I have a unique label name "UpdateTest" with color "f100ff" and description "Label for testing updates"
     And I send a createLabel mutation to the GitHub GraphQL API
     And I get the label ID

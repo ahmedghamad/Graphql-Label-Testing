@@ -120,15 +120,19 @@ public class ReadLabelStepdefs{
                 )
         );
     }
-    @Then("I should a status code of {string}")
-    public void ShouldAStatusCodeOf(String arg0) {
-        assertThat(createResponse.statusCode(), is(200));
-    }
+//    @Then("I should a status code of {string}")
+//    public void ShouldAStatusCodeOf(String arg0) {
+//        assertThat(createResponse.statusCode(), is(200));
+//    }
 
 
     @And("I should see  an error messages")
     public void iShouldSeeAnErrorMessages() {
         String errorMessage = createResponse.jsonPath().getString("errors[0].message");
         assertThat(errorMessage, is("Could not resolve to a Repository with the name ' /Graphql-Label-Testing'."));
+    }
+
+    public static Response getCreateResponse() {
+        return createResponse;
     }
 }

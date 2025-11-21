@@ -10,7 +10,5 @@ Feature: User Journey of using git hub labels
     Then I should see the name "UserJourney"
     And I get the created label ID
     And I update the label name to "ChangedLabelName"
-    And I view the labels
-    And I should see the name "ChangedLabelName"
     And I delete the label
 

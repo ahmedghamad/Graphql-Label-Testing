@@ -1,0 +1,22 @@
+query Repository ($name: String!, $owner: String!){
+    repository(name: $name, owner: $owner) {
+        issues {
+            totalCount
+        }
+        labels(first: 50) {
+            totalCount
+            nodes {
+                color
+                createdAt
+                description
+                id
+                isDefault
+                name
+                resourcePath
+                updatedAt
+                url
+            }
+        }
+    }
+
+}

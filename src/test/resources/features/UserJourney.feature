@@ -1,7 +1,7 @@
 Feature: User Journey of using git hub labels
 
 
-  Scenario: Updating an label
+  Scenario: User Journey of creating, reading updating and deleting a label
     Given I set a valid repository ID
     And I have a unique label name "UserJourney" with color "f100ff" and description "Label for user Journey"
     When I send a createLabel mutation to the GitHub GraphQL API

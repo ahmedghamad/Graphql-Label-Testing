@@ -125,7 +125,7 @@ public class ReadLabelStepdefs{
         assertThat(errorMessage, is("Could not resolve to a Repository with the name ' /Graphql-Label-Testing'."));
     }
 
-
-
-
+    public static Response getCreateResponse() {
+        return createResponse;
+    }
 }

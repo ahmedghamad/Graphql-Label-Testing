@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,12 +44,12 @@ public class UpdateLabelStepdefs extends TestBase {
         response = TestBase.executeQuery(
                 TestBase.readQuery("UpdateLabel.graphql"),
                 "UpdateLabel",
-                Map.of(
+                new HashMap<>(Map.of(
                         "id", Label_ID,
                         "name", newTitle,
                         "description", newBody,
                         "color", newColour
-                )
+                ))
         );
         pojoResponse = response.as(UpdateResponse.class);
     }

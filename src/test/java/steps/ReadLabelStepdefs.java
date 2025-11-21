@@ -63,11 +63,6 @@ public class ReadLabelStepdefs{
         labelUrl = createResponse.jsonPath().getString("data.repository.labels.nodes[1].url");
 
 
-        System.out.println("Label Name: " + labelName);
-        System.out.println("Label ID: " + labelId);
-        System.out.println("Label Description: " + labelDescribtion);
-        System.out.println("Color: " + color);
-
     }
 
 
@@ -125,6 +120,11 @@ public class ReadLabelStepdefs{
                 )
         );
     }
+    @Then("I should a status code of {string}")
+    public void ShouldAStatusCodeOf(String arg0) {
+        assertThat(createResponse.statusCode(), is(200));
+    }
+
 
     @And("I should see  an error messages")
     public void iShouldSeeAnErrorMessages() {

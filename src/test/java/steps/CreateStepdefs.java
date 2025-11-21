@@ -6,16 +6,18 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.response.Response;
+import pojos.create.CreateResponse;
 
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-
+//@JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateStepdefs extends utils.TestBase {
 
     //private static String repositoryId;
@@ -27,6 +29,7 @@ public class CreateStepdefs extends utils.TestBase {
     private static String labelName;
     private static String labelColor;
     private static String labelDescription;
+    public static CreateResponse pojoResponse;
 
     @Given("I have a valid GitHub repository ID")
     public void iHaveAValidGitHubRepositoryID() throws IOException {
@@ -52,11 +55,14 @@ public class CreateStepdefs extends utils.TestBase {
         response = executeQuery(readQuery("CreateLabel.graphql"), "CreateLabel", variables);
         labelId = response.jsonPath().getString("data.createLabel.label.id");
         System.out.println("Created Label ID: " + labelId);
+
+        pojoResponse = response.as(CreateResponse.class);
     }
 
     @Then("the API should respond with status code {int}")
     public void theAPIShouldRespondWithStatusCode(int statusCode) {
         assertThat(response.statusCode(), is(statusCode));
+       // assertThat(pojoResponse.);
 
 
     }
@@ -64,13 +70,15 @@ public class CreateStepdefs extends utils.TestBase {
     @And("label should have correct details")
     public void labelShouldHaveCorrectDetails() {
         String actualName = response.jsonPath().getString("data.createLabel.label.name");
-        String actualColor = response.jsonPath().getString("data.createLabel.label.color");
-        String actualDescription = response.jsonPath().getString("data.createLabel.label.description");
 
+        String actualColor = response.jsonPath().getString("data.createLabel.label.color");
+        //String actualDescription = response.jsonPath().getString("data.createLabel.label.description");
+        labelId = response.jsonPath().getString("data.createLabel.label.id");
         assertThat(labelId, notNullValue());
         assertThat(actualName, is(labelName));
-        assertThat(actualColor, is(labelColor));
-        assertThat(actualDescription, is(labelDescription));
+       // assertThat(actualColor, is(labelColor));
+        assertThat(pojoResponse.getData().getCreateLabel().getLabel().getColor(),is(labelColor));
+        assertThat(pojoResponse.getData().getCreateLabel().getLabel().getDescription(), is(labelDescription));
 
     }
 

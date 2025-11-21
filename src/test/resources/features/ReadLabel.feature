@@ -6,7 +6,7 @@ Feature: Read Label on Github repository
       # Happy Path
 Scenario: Successfully view an existing label
     When I view the labels
-    Then I should a status code of "200"
+    Then I should get status code of "200"
     And I should see  no error messages
     And I should see the  color
     And I should see the  createdAt
@@ -18,7 +18,7 @@ Scenario: Successfully view an existing label
   # Sad Path
   Scenario: UnSuccessfully view of a label
     When I UnSuccessfully the labels
-    Then I should a status code of "200"
+    Then Check status code of "200"
     And I should see  an error messages
 
 
